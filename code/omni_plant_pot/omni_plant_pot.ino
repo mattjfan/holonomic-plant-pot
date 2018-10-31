@@ -21,10 +21,6 @@
 #define LEFT 3
 #define RIGHT 4
 
-void setup() {
-  // put your setup code here, to run once:
-
-}
 
 void set_direction( char group, int dir){
   int left, right;
@@ -37,34 +33,47 @@ void set_direction( char group, int dir){
     left = BL;
     right = BR;
   }
+  Serial.print("Left pin is ");
+  Serial.println((String) left);
+  Serial.print("Right pin is ");
+  Serial.println((String) right);
   // Writing the corresponding direction pins as desired
   switch(dir){
     case FORWARD:
+      Serial.println("forwards");
       digitalWrite(left, HIGH);
       digitalWrite(right, HIGH);
       break;
     case BACKWARD:
+      Serial.println("backwards");
       digitalWrite(left, LOW);
       digitalWrite(right, LOW);
       break;
     case LEFT:
+      Serial.println("left");
       digitalWrite(left, LOW);
       digitalWrite(right, HIGH);
-      break
+      break;
     case RIGHT:
+      Serial.println("right");
       digitalWrite(left, HIGH);
       digitalWrite(right, LOW);
-      break //why not
-    default: break
+      break; //why not
+    default: break;
   }
 }
 
 void set_power( char group, int power) {
   // somewhat unnecessary abstraction, but I'll include for consistency with interface.
+  Serial.println((String)group);
   if (group == 'A'){
+    Serial.print("Setting A power to ");
+    Serial.println((String)power);
     analogWrite(AP, power);
   }
   if (group == 'B'){
+    Serial.print("Setting B power to ");
+    Serial.println((String)power);
     analogWrite(BP, power);
   }
 }
@@ -72,6 +81,20 @@ void set_power( char group, int power) {
 void set_motor_group( char group, int dir, int power){
   set_direction(group, dir);
   set_power(group, power);
+  
+  
+}
+
+
+void setup() {
+  pinMode(AL, OUTPUT);
+  pinMode(AR, OUTPUT);
+  pinMode(AP, OUTPUT);
+  Serial.begin(9600);
+  set_motor_group('A', FORWARD, 200);
+//  digitalWrite(AL, HIGH);
+//  digitalWrite(AR, LOW);
+//  analogWrite(AP, 255);
 }
 
 void holonomic_seek_step(){
@@ -86,6 +109,5 @@ void brake(){
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  
 }
