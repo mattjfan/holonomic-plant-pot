@@ -59,22 +59,22 @@ void set_direction_DEPRECATED( char group, int dir){
   // Writing the corresponding direction pins as desired
   switch(dir){
     case FORWARD:
-      Serial.println("forwards");
+//      Serial.println("forwards");
       digitalWrite(left, HIGH);
       digitalWrite(right, HIGH);
       break;
     case BACKWARD:
-      Serial.println("backwards");
+//      Serial.println("backwards");
       digitalWrite(left, LOW);
       digitalWrite(right, LOW);
       break;
     case LEFT:
-      Serial.println("left");
+//      Serial.println("left");
       digitalWrite(left, LOW);
       digitalWrite(right, HIGH);
       break;
     case RIGHT:
-      Serial.println("right");
+//      Serial.println("right");
       digitalWrite(left, HIGH);
       digitalWrite(right, LOW);
       break; //why not
@@ -105,28 +105,28 @@ void set_direction( char group, int dir){
   // Writing the corresponding direction pins as desired
   switch(dir){
     case FORWARD:
-      Serial.println("forwards");
+//      Serial.println("forwards");
       digitalWrite(l1, HIGH);
       digitalWrite(r1, HIGH);
       digitalWrite(l2, LOW);
       digitalWrite(r2, LOW);
       break;
     case BACKWARD:
-      Serial.println("backwards");
+//      Serial.println("backwards");
       digitalWrite(l1, LOW);
       digitalWrite(r1, LOW);
       digitalWrite(l2, HIGH);
       digitalWrite(r2, HIGH);
       break;
     case LEFT:
-      Serial.println("left");
+//      Serial.println("left");
       digitalWrite(l1, LOW);
       digitalWrite(r1, HIGH);
       digitalWrite(l2, HIGH);
       digitalWrite(r2, LOW);
       break;
     case RIGHT:
-      Serial.println("right");
+//      Serial.println("right");
       digitalWrite(l1, HIGH);
       digitalWrite(r1, LOW);
       digitalWrite(l2, LOW);
@@ -164,15 +164,24 @@ void holonomic_seek_step(){
   update_photocells();
   int y_diff = ((light_up - light_down) * 255) / 1023;
   int x_diff = ((light_right - light_left) * 255) / 1023;
+  int y_mag = abs(y_diff);
+  int x_mag = abs(x_diff);
+  if (y_mag > x_mag){
+    x_mag = 255 * x_mag / y_mag;
+    y_mag = 255;
+  } else if (x_mag > y_mag){
+   y_mag = 255 * y_mag / x_mag;
+   x_mag = 255;
+  }
   if (y_diff > 0) {
-    set_motor_group('A', FORWARD, y_diff);
+    set_motor_group('A', FORWARD, y_mag);
   } else {
-    set_motor_group('A', BACKWARD, y_diff * -1);
+    set_motor_group('A', BACKWARD, y_mag);
   }
   if (x_diff > 0) {
-    set_motor_group('B', FORWARD, x_diff);
+    set_motor_group('B', FORWARD, x_mag);
   } else {
-    set_motor_group('B', BACKWARD, x_diff * -1);
+    set_motor_group('B', BACKWARD, x_mag);
   }  
 }
 
@@ -337,7 +346,7 @@ void setup() {
 }
 
 void loop() {
-//  serial_processing();
-//  set_motors_manual(120);
-  holonomic_seek();
+//    serial_processing();
+//    set_motors_manual(120);
+  holonomic_seek(1023, 100);
 }
